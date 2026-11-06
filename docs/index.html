@@ -3,58 +3,108 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>farm_helper — скриншоты</title>
-  <meta name="description" content="Скриншоты farm_helper — учёт покупок и продаж для Majestic RP.">
-  <meta property="og:title" content="farm_helper — скриншоты">
-  <meta property="og:description" content="Учёт покупок и продаж для Majestic RP: окно поверх игры по F7, автоматический расчёт прибыли.">
+  <title>farm_helper — учёт сделок для Majestic RP</title>
+  <meta name="description" content="Учёт покупок и продаж для Majestic RP: окно поверх игры по F7, автоматический расчёт прибыли, таймер фарма и отчёт за неделю.">
+  <meta property="og:title" content="farm_helper — учёт сделок для Majestic RP">
+  <meta property="og:description" content="Окно поверх игры по F7: запись сделок, автоматическая прибыль, таймер фарма и отчёт за неделю.">
   <meta property="og:image" content="https://aquadelin.github.io/farm_helper-releases/assets/banner.png">
   <style>
     :root {
       --bg: #0e0e0e;
-      --raised: #1a1a1a;
-      --border: #2e2e2e;
+      --raised: #171717;
+      --border: #2a2a2a;
       --text: #f7f7f7;
       --muted: #a3a3a3;
       --accent: #e0015b;
       --accent-strong: #c0014e;
+      --accent-text: #ff4f8b;
+      --pos: #3fcf6a;
     }
     * { box-sizing: border-box; }
-    html { color-scheme: dark; }
+    html { color-scheme: dark; scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
     body {
       margin: 0;
       background: var(--bg);
       color: var(--text);
       font-family: 'Segoe UI', -apple-system, system-ui, sans-serif;
-      line-height: 1.5;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
     }
+    a { color: inherit; }
+    img { display: block; max-width: 100%; height: auto; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
     .stripe { height: 4px; background: var(--accent); }
-    header, main, footer { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 28px; padding-bottom: 8px; }
-    .brand { display: flex; align-items: center; gap: 14px; color: inherit; text-decoration: none; }
-    .brand strong { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+
+    /* Шапка */
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 20px; padding-bottom: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .brand strong { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
     .brand strong span { color: var(--muted); font-weight: 700; }
-    .download {
-      display: inline-flex; align-items: center; height: 42px; padding: 0 20px; border-radius: 10px;
-      background: var(--accent); color: #fff; font-weight: 700; text-decoration: none;
+    .top nav { display: flex; gap: 22px; }
+    .top nav a { color: var(--muted); text-decoration: none; font-size: 15px; }
+    .top nav a:hover { color: var(--text); }
+
+    .button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      height: 52px; padding: 0 26px; border-radius: 12px;
+      background: var(--accent); color: #fff; font-weight: 700; font-size: 17px; text-decoration: none;
+      transition: background-color 120ms ease-out;
     }
-    .download:hover { background: var(--accent-strong); }
-    h1 { margin: 24px 0 4px; font-size: 22px; }
-    .lead { margin: 0 0 24px; color: var(--muted); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; padding-bottom: 32px; }
-    .thumb {
-      display: flex; flex-direction: column; gap: 10px; padding: 10px; border: 1px solid var(--border); border-radius: 14px;
-      background: var(--raised); color: inherit; font: inherit; text-align: left; cursor: zoom-in;
-      transition: border-color 120ms ease-out, transform 120ms ease-out;
+    .button:hover { background: var(--accent-strong); }
+    .button svg { width: 20px; height: 20px; }
+    .button.small { height: 40px; padding: 0 16px; font-size: 15px; border-radius: 10px; }
+
+    /* Первый экран */
+    .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 48px; align-items: center; padding-top: 48px; padding-bottom: 72px; }
+    .hero h1 { margin: 0 0 18px; font-size: clamp(34px, 5vw, 54px); line-height: 1.08; letter-spacing: -1px; text-wrap: balance; }
+    .hero h1 em { font-style: normal; color: var(--accent-text); }
+    .hero p { margin: 0 0 28px; max-width: 520px; color: var(--muted); font-size: 18px; text-wrap: pretty; }
+    .hero-meta { margin-top: 14px; color: var(--muted); font-size: 14px; }
+    .hero-shot { justify-self: center; width: min(360px, 100%); }
+    .hero-shot img { border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 30px 80px rgba(224, 1, 91, 0.18), 0 20px 50px rgba(0, 0, 0, 0.6); }
+
+    /* Возможности */
+    section { padding: 56px 0; border-top: 1px solid var(--border); }
+    .section-title { margin: 0 0 8px; font-size: 30px; letter-spacing: -0.5px; }
+    .section-lead { margin: 0 0 40px; color: var(--muted); font-size: 17px; }
+    .feature { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 48px; align-items: center; padding: 28px 0; }
+    .feature.flip { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
+    .feature.flip .feature-text { order: 2; }
+    .feature h3 { margin: 0 0 10px; font-size: 24px; letter-spacing: -0.3px; }
+    .feature p { margin: 0 0 12px; color: var(--muted); font-size: 16px; text-wrap: pretty; }
+    .feature ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+    .feature li { position: relative; padding-left: 20px; font-size: 15px; }
+    .feature li::before { content: ''; position: absolute; left: 0; top: 10px; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
+    .shot {
+      display: block; width: 100%; padding: 0; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+      background: var(--raised); cursor: zoom-in; transition: border-color 120ms ease-out, transform 160ms ease-out;
     }
-    .thumb:hover, .thumb:focus-visible { border-color: #4a4a4a; transform: translateY(-2px); outline: none; }
-    .thumb:focus-visible { box-shadow: 0 0 0 3px rgba(224, 1, 91, 0.45); }
-    .thumb .frame { display: flex; align-items: center; justify-content: center; height: 220px; border-radius: 8px; background: #111; overflow: hidden; }
-    .thumb img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
-    .thumb b { font-size: 15px; }
-    .thumb small { color: var(--muted); font-size: 13px; }
-    footer { padding-bottom: 32px; color: #777; font-size: 13px; }
+    .shot:hover { border-color: #444; transform: translateY(-2px); }
+    .shot:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(224, 1, 91, 0.5); }
+    .shot.narrow { width: min(320px, 100%); justify-self: center; }
+    .shot.report { width: min(520px, 100%); justify-self: center; }
+
+    /* Шаги и карточки */
+    .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+    .card { padding: 22px; border: 1px solid var(--border); border-radius: 14px; background: var(--raised); }
+    .steps .card { counter-increment: step; }
+    .steps .card::before {
+      content: counter(step); display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; margin-bottom: 12px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700;
+    }
+    .card h3 { margin: 0 0 6px; font-size: 17px; }
+    .card p { margin: 0; color: var(--muted); font-size: 15px; }
+    .note { margin: 20px 0 0; color: var(--muted); font-size: 14px; }
+    .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    kbd { padding: 1px 7px; border: 1px solid #3d3d3d; border-radius: 6px; background: #111; font: inherit; font-size: 13px; font-weight: 600; }
+
+    .cta { text-align: center; }
+    .cta p { color: var(--muted); margin: 0 0 24px; font-size: 17px; }
+    footer { padding: 28px 0 40px; border-top: 1px solid var(--border); color: #777; font-size: 13px; }
     footer a { color: var(--muted); }
 
+    /* Просмотр скриншотов */
     .viewer { position: fixed; inset: 0; z-index: 10; display: none; flex-direction: column; background: rgba(8, 8, 8, 0.96); }
     .viewer.open { display: flex; }
     .viewer-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px; }
@@ -68,42 +118,190 @@
       border-radius: 50%; background: rgba(26, 26, 26, 0.9); color: var(--text); cursor: pointer;
     }
     .icon-button:hover { border-color: #5a5a5a; background: #242424; }
-    .nav { position: absolute; top: 50%; transform: translateY(-50%); }
-    .nav.prev { left: 14px; }
-    .nav.next { right: 14px; }
-    svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    @media (max-width: 640px) {
-      header, main, footer { padding: 0 16px; }
-      header { padding-top: 20px; }
-      .grid { grid-template-columns: 1fr; }
+    .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); }
+    .nav-arrow.prev { left: 14px; }
+    .nav-arrow.next { right: 14px; }
+    .icon-button svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 0 16px; }
+      .top nav { display: none; }
+      .hero, .feature, .feature.flip { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+      .feature.flip .feature-text { order: 0; }
+      .hero { padding-top: 24px; padding-bottom: 48px; }
+      .steps, .grid2 { grid-template-columns: minmax(0, 1fr); }
+      section { padding: 40px 0; }
       .stage { padding: 0 8px 16px; }
-      .nav { display: none; }
+      .nav-arrow { display: none; }
     }
-    @media (prefers-reduced-motion: reduce) { .thumb { transition: none; } .thumb:hover { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .shot, .button { transition: none; } .shot:hover { transform: none; } }
   </style>
 </head>
 <body>
   <div class="stripe"></div>
-  <header>
-    <a class="brand" href="https://github.com/aquadelin/farm_helper-releases">
-      <svg viewBox="0 0 256 256" width="44" height="44" style="stroke:none" aria-hidden="true">
+  <div class="wrap top">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 256 256" width="40" height="40" aria-hidden="true">
         <rect width="256" height="256" rx="56" fill="#e0015b"/>
         <rect x="56" y="150" width="40" height="50" fill="#fff"/><rect x="110" y="104" width="40" height="96" fill="#fff"/><rect x="164" y="58" width="40" height="142" fill="#fff"/>
       </svg>
       <strong>farm<span>_helper</span></strong>
     </a>
-    <a class="download" href="https://github.com/aquadelin/farm_helper-releases/releases/latest">Скачать для Windows</a>
-  </header>
+    <nav aria-label="Разделы">
+      <a href="#features">Возможности</a>
+      <a href="#install">Установка</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+    <a class="button small" href="https://github.com/aquadelin/farm_helper-releases/releases/latest">Скачать</a>
+  </div>
 
   <main>
-    <h1>Скриншоты</h1>
-    <p class="lead">Учёт покупок и продаж для Majestic RP. Нажмите на скриншот, чтобы открыть его на весь экран.</p>
-    <div class="grid" id="grid"></div>
+    <div class="wrap hero">
+      <div>
+        <h1>Учёт сделок для Majestic RP <em>прямо поверх игры</em></h1>
+        <p>Нажмите F7, выберите предмет, укажите цену. Прибыль за день, неделю и всё время рассчитывается автоматически.</p>
+        <a class="button" href="https://github.com/aquadelin/farm_helper-releases/releases/latest">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          Скачать для Windows
+        </a>
+        <div class="hero-meta">Windows 10 и 11 · без прав администратора · журнал хранится на вашем компьютере</div>
+      </div>
+      <button class="shot narrow hero-shot" data-shot="panel" aria-label="Панель поверх игры: открыть на весь экран">
+        <img src="assets/panel.png" width="840" height="1720" alt="Панель farm_helper поверх игры">
+      </button>
+    </div>
+
+    <section id="features">
+      <div class="wrap">
+        <h2 class="section-title">Возможности</h2>
+        <p class="section-lead">Всё, что нужно для торговли и фарма, — в одном окне. Подробная справка — в самом приложении.</p>
+
+        <div class="feature">
+          <div class="feature-text">
+            <h3>Прибыль и цель</h3>
+            <p>Прибыль считается по средней цене покупки с учётом остатков. Расходы — аренда, налоги, топливо — вычитаются автоматически.</p>
+            <ul>
+              <li>Сводка за сегодня, 7 и 30 дней, график по дням</li>
+              <li>Цель на день или неделю с рекомендацией по вашим записям</li>
+            </ul>
+          </div>
+          <button class="shot" data-shot="home" aria-label="Главная: открыть на весь экран"><img src="assets/home.png" width="2880" height="1800" alt="Главная: прибыль, цель и график по дням" loading="lazy"></button>
+        </div>
+
+        <div class="feature flip">
+          <div class="feature-text">
+            <h3>Таймер фарма</h3>
+            <p>Засеките время рыбалки, охоты или фермы и укажите добычу. Стоимость рассчитывается по вашим продажам — сразу видно, что выгоднее в час.</p>
+            <ul>
+              <li>Пауза и продолжение, таймер идёт при скрытом окне</li>
+              <li>Доход в час по каждому занятию</li>
+            </ul>
+          </div>
+          <button class="shot" data-shot="farm" aria-label="Фарм: открыть на весь экран"><img src="assets/farm.png" width="2880" height="1800" alt="Раздел «Фарм»: доход в час по занятиям" loading="lazy"></button>
+        </div>
+
+        <div class="feature">
+          <div class="feature-text">
+            <h3>Импорт со скриншота</h3>
+            <p>Сделайте скриншот «Истории сделок» маркетплейса и нажмите <kbd>Ctrl+V</kbd> — сделки распознаются и записываются после проверки. Повторы отмечаются.</p>
+            <ul>
+              <li>Распознавание выполняется на компьютере</li>
+              <li>Изображение никуда не передаётся</li>
+            </ul>
+          </div>
+          <button class="shot" data-shot="import" aria-label="Импорт: открыть на весь экран"><img src="assets/import.png" width="2880" height="1800" alt="Проверка распознанных сделок перед записью" loading="lazy"></button>
+        </div>
+
+        <div class="feature flip">
+          <div class="feature-text">
+            <h3>История цен</h3>
+            <p>Рейтинг предметов по выручке, количеству и прибыли, график цены за штуку по дням — по каким ценам вы покупали и продавали.</p>
+          </div>
+          <button class="shot" data-shot="prices" aria-label="Цены: открыть на весь экран"><img src="assets/prices.png" width="2880" height="1800" alt="Раздел «Цены»: рейтинг и график цены" loading="lazy"></button>
+        </div>
+
+        <div class="feature">
+          <div class="feature-text">
+            <h3>Отчёт за неделю</h3>
+            <p>Прибыль, лучшие предметы, фарм и цель на одной картинке. Скопируйте и вставьте в Discord или Telegram, или сохраните в PNG.</p>
+          </div>
+          <button class="shot report" data-shot="report" aria-label="Отчёт за неделю: открыть на весь экран"><img src="assets/report.png" width="1200" height="1246" alt="Пример отчёта за неделю" loading="lazy"></button>
+        </div>
+
+        <div class="feature flip">
+          <div class="feature-text">
+            <h3>Каталог Majestic RP</h3>
+            <p>Более 28 000 предметов, транспорта и одежды с картинками. Карточка предмета: сведения с вики и статистика ваших сделок; избранное — в панели в один клик.</p>
+          </div>
+          <button class="shot" data-shot="items" aria-label="Предметы: открыть на весь экран"><img src="assets/items.png" width="2880" height="1800" alt="Каталог предметов" loading="lazy"></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <h2 class="section-title">Установка</h2>
+        <p class="section-lead">Около минуты. Приложение не добавляется в автозагрузку Windows.</p>
+        <ol class="steps">
+          <li class="card">
+            <h3>Скачайте установщик</h3>
+            <p><a href="https://github.com/aquadelin/farm_helper-releases/releases/latest">farm_helper-Setup.exe</a> из последнего релиза.</p>
+          </li>
+          <li class="card">
+            <h3>Запустите</h3>
+            <p>Если Windows покажет предупреждение, нажмите «Подробнее» → «Выполнить в любом случае». Причина — отсутствие платной цифровой подписи.</p>
+          </li>
+          <li class="card">
+            <h3>Откройте в игре</h3>
+            <p>Включите в GTA V режим «Оконный без рамки» и нажмите <kbd>F7</kbd>.</p>
+          </li>
+        </ol>
+        <p class="note">Новые версии загружаются автоматически и устанавливаются при перезапуске. Записи сохраняются.</p>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2 class="section-title">Безопасность и вопросы</h2>
+        <div class="grid2">
+          <div class="card">
+            <h3>Не взаимодействует с игрой</h3>
+            <p>Обычное окно Windows: не читает память игры, не нажимает клавиши и не делает снимков экрана.</p>
+          </div>
+          <div class="card">
+            <h3>Данные — на вашем компьютере</h3>
+            <p>Журнал хранится в папке %APPDATA%\farm-helper. Резервная копия и выгрузка в Excel — в настройках.</p>
+          </div>
+          <div class="card">
+            <h3>Окно не появляется поверх игры</h3>
+            <p>Включите в настройках графики GTA V режим «Оконный без рамки».</p>
+          </div>
+          <div class="card">
+            <h3>Разрешено ли на сервере?</h3>
+            <p>farm_helper не взаимодействует с игровым клиентом. Правила использования стороннего ПО устанавливает администрация сервера.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="wrap">
+        <h2 class="section-title">Начните вести учёт</h2>
+        <p>Без регистрации и рекламы. Новые версии устанавливаются автоматически.</p>
+        <a class="button" href="https://github.com/aquadelin/farm_helper-releases/releases/latest">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          Скачать для Windows
+        </a>
+      </div>
+    </section>
   </main>
 
   <footer>
-    Неофициальный проект. Не связан с Majestic RP и Rockstar Games. ·
-    <a href="https://github.com/aquadelin/farm_helper-releases">Описание и установка</a>
+    <div class="wrap">
+      Неофициальный проект. Не связан с Majestic RP и Rockstar Games. ·
+      <a href="https://github.com/aquadelin/farm_helper-releases">GitHub</a> ·
+      <a href="https://github.com/aquadelin/farm_helper-releases/releases">Все версии</a>
+    </div>
   </footer>
 
   <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="viewer-name">
@@ -115,50 +313,32 @@
       </div>
     </div>
     <div class="stage" id="stage">
-      <button class="icon-button nav prev" id="prev" aria-label="Предыдущий скриншот"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <button class="icon-button nav-arrow prev" id="prev" aria-label="Предыдущий скриншот"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
       <img id="viewer-img" alt="">
-      <button class="icon-button nav next" id="next" aria-label="Следующий скриншот"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="icon-button nav-arrow next" id="next" aria-label="Следующий скриншот"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
     </div>
   </div>
 
   <script>
-    // Порядок — как в меню приложения: главная, история, цены, предметы, затем панель поверх игры.
+    // Все скриншоты в порядке меню приложения; просмотр листает и те, которых нет в блоках выше.
     const SHOTS = [
-      { id: 'home', file: 'home.png', name: 'Главная', text: 'Прибыль за периоды, график по дням, самые прибыльные предметы' },
+      { id: 'panel', file: 'panel.png', name: 'Панель поверх игры', text: 'Избранное, прибыль за день и цель' },
+      { id: 'record', file: 'panel-record.png', name: 'Запись сделки', text: 'Количество, цена и итог' },
+      { id: 'home', file: 'home.png', name: 'Главная', text: 'Прибыль за периоды, цель и график по дням' },
       { id: 'history', file: 'history.png', name: 'История', text: 'Сделки по дням, фильтры и поиск' },
       { id: 'prices', file: 'prices.png', name: 'Цены', text: 'Рейтинг предметов и график цены за штуку' },
+      { id: 'farm', file: 'farm.png', name: 'Фарм', text: 'Доход в час по занятиям и список сессий' },
       { id: 'items', file: 'items.png', name: 'Предметы', text: 'Каталог предметов, транспорта и одежды' },
       { id: 'card', file: 'card.png', name: 'Карточка предмета', text: 'Сведения с вики и статистика сделок' },
       { id: 'import', file: 'import.png', name: 'Импорт со скриншота', text: 'Проверка распознанных сделок перед записью' },
-      { id: 'panel', file: 'panel.png', name: 'Панель поверх игры', text: 'Избранное, итог дня и последние сделки' },
-      { id: 'record', file: 'panel-record.png', name: 'Запись сделки', text: 'Количество, цена и итог' },
+      { id: 'report', file: 'report.png', name: 'Отчёт за неделю', text: 'Картинка для Discord или Telegram' },
+      { id: 'help', file: 'help.png', name: 'Справка', text: 'Описание всех функций в приложении' },
     ];
 
-    const grid = document.getElementById('grid');
     const viewer = document.getElementById('viewer');
     const img = document.getElementById('viewer-img');
     let current = -1;
     let opener = null;
-
-    SHOTS.forEach((shot, i) => {
-      const button = document.createElement('button');
-      button.className = 'thumb';
-      button.setAttribute('aria-label', `${shot.name}: открыть на весь экран`);
-      const frame = document.createElement('span');
-      frame.className = 'frame';
-      const image = document.createElement('img');
-      image.src = `assets/${shot.file}`;
-      image.alt = shot.name;
-      image.loading = 'lazy';
-      frame.append(image);
-      const name = document.createElement('b');
-      name.textContent = shot.name;
-      const text = document.createElement('small');
-      text.textContent = shot.text;
-      button.append(frame, name, text);
-      button.addEventListener('click', () => open(i, button));
-      grid.append(button);
-    });
 
     function show(i) {
       current = (i + SHOTS.length) % SHOTS.length;
@@ -188,6 +368,9 @@
       opener?.focus();
     }
 
+    document.querySelectorAll('[data-shot]').forEach((button) => {
+      button.addEventListener('click', () => open(SHOTS.findIndex((s) => s.id === button.dataset.shot), button));
+    });
     document.getElementById('prev').addEventListener('click', () => show(current - 1));
     document.getElementById('next').addEventListener('click', () => show(current + 1));
     document.getElementById('close').addEventListener('click', close);
@@ -217,7 +400,7 @@
       touchX = null;
     });
 
-    // Ссылка из README вида …/#prices открывает альбом сразу на этом скриншоте.
+    // Ссылка вида …/#farm открывает просмотр сразу на этом скриншоте.
     const start = SHOTS.findIndex((s) => `#${s.id}` === location.hash);
     if (start >= 0) open(start);
   </script>
